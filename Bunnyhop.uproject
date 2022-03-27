@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{E1DBAD55-4ED8-4E15-4AA3-C9A81BC5A042}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Bunnyhop",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
+}
