@@ -65,9 +65,16 @@ public:
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAnimMontage* FireAnimation;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	FVector ForwardDir;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	FVector SideDir;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 	bool jumpPressed = false;
-
+	
 protected:
 	void OnJump();
 	void OnStopJumping();

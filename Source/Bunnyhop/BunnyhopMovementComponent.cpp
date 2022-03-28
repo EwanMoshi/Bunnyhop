@@ -21,15 +21,15 @@ void UBunnyhopMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	// scale velocity to draw debug line
 	FVector scaledOwnerVelocity = ownerVelocity * 0.3f;
-	
+
 	
 	//GetLastUpdateVelocity()
-	DrawDebugLine(GetWorld(), ownerLocation, ownerLocation + scaledOwnerVelocity, FColor::Emerald, false, 0.05f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), ownerLocation, ownerLocation + scaledOwnerVelocity, FColor::Emerald, false, 0.05f, 0, 0.6f);
 
 	WishDirection = ConsumeInputVector();
-	UE_LOG(LogTemp, Warning, TEXT("inputVector: %s"), *WishDirection.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("inputVector: %s"), *WishDirection.ToString());
 
-	DrawDebugLine(GetWorld(), ownerLocation, ownerLocation + WishDirection * 5.0f, FColor::Blue, false, 0.05f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), ownerLocation, ownerLocation + WishDirection * 5.0f, FColor::Blue, false, 0.05f, 0, 2.0f);
 
 	WishDirection.Normalize();
 	PerformMovement(DeltaTime);
@@ -43,8 +43,7 @@ void UBunnyhopMovementComponent::PerformMovement(float DeltaTime)
 
 	if (IsMovingOnGround())
 	{
-		ApplyGroundFriction(DeltaTime);
-		Accelerate(WishDirection, WalkSpeed, WalkAcceleration, DeltaTime);
+		MoveGround(DeltaTime);
 	}
 	else
 	{
@@ -53,6 +52,34 @@ void UBunnyhopMovementComponent::PerformMovement(float DeltaTime)
 	}
 
 	ApplyMove(DeltaTime);
+}
+
+void UBunnyhopMovementComponent::AddInputVector(FVector WorldVector, bool bForce)
+{
+	Super::AddInputVector(WorldVector, bForce);
+}
+
+void UBunnyhopMovementComponent::MoveGround(float DeltaTime)
+{
+	if (!IsJumpHeldDown())
+	{
+		ApplyGroundFriction(DeltaTime);
+	}
+
+	auto RightVec = GetOwner()->GetActorRightVector();
+	auto ForwardVec = GetOwner()->GetActorRightVector();
+	
+	auto OwnerChar = Cast<ABunnyhopCharacter>(GetOwner());
+	
+	if (OwnerChar)
+	{
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->ForwardDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->SideDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
+		auto WishDir =  OwnerChar->ForwardDir + OwnerChar->SideDir;
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + WishDir * 100.0f, FColor::Yellow, false, 0.05f, 0, 3.0f);
+	}
+	
+	Accelerate(WishDirection, WalkSpeed, WalkAcceleration, DeltaTime);
 }
 
 void UBunnyhopMovementComponent::ApplyGroundFriction(float DeltaTime)
@@ -129,5 +156,17 @@ void UBunnyhopMovementComponent::TryJump()
 			}
 		}
 	}
+}
+
+bool UBunnyhopMovementComponent::IsJumpHeldDown()
+{
+	auto OwnerChar = Cast<ABunnyhopCharacter>(GetOwner());
+	
+	if (OwnerChar)
+	{
+		return OwnerChar->jumpPressed;
+	}
+
+	return false;
 }
 

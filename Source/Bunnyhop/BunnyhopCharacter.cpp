@@ -148,6 +148,8 @@ void ABunnyhopCharacter::MoveForward(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
+
+	ForwardDir = GetActorForwardVector() * Value;
 }
 
 void ABunnyhopCharacter::MoveRight(float Value)
@@ -157,6 +159,8 @@ void ABunnyhopCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
 	}
+	
+	SideDir = GetActorRightVector() * Value;
 }
 
 void ABunnyhopCharacter::TurnAtRate(float Rate)

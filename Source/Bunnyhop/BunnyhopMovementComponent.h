@@ -18,8 +18,10 @@ public:
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void PerformMovement(float DeltaTime) override;
+	virtual void AddInputVector(FVector WorldVector, bool bForce) override;
 	
 	void ApplyMove(float DeltaTime);
+	void MoveGround(float DeltaTime);
 	void ApplyGroundFriction(float DeltaTime);
 	void Accelerate(FVector WishDir, float WishSpeed, float Accel, float DeltaTime);
 	void TryJump();
@@ -38,4 +40,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float AirAcceleration = 9000.0f;
+
+private:
+	bool IsJumpHeldDown();
 };
