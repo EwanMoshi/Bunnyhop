@@ -43,4 +43,5 @@ public:
 
 private:
 	bool IsJumpHeldDown();
+	void DrawDebugLines();
 };

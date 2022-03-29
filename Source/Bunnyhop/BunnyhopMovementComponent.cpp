@@ -21,7 +21,7 @@ void UBunnyhopMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	// scale velocity to draw debug line
 	FVector scaledOwnerVelocity = ownerVelocity * 0.3f;
-
+	scaledOwnerVelocity.Z = 0.0f;
 	
 	//GetLastUpdateVelocity()
 	DrawDebugLine(GetWorld(), ownerLocation, ownerLocation + scaledOwnerVelocity, FColor::Emerald, false, 0.05f, 0, 0.6f);
@@ -52,6 +52,8 @@ void UBunnyhopMovementComponent::PerformMovement(float DeltaTime)
 	}
 
 	ApplyMove(DeltaTime);
+
+	DrawDebugLines();
 }
 
 void UBunnyhopMovementComponent::AddInputVector(FVector WorldVector, bool bForce)
@@ -65,21 +67,15 @@ void UBunnyhopMovementComponent::MoveGround(float DeltaTime)
 	{
 		ApplyGroundFriction(DeltaTime);
 	}
-
-	auto RightVec = GetOwner()->GetActorRightVector();
-	auto ForwardVec = GetOwner()->GetActorRightVector();
 	
 	auto OwnerChar = Cast<ABunnyhopCharacter>(GetOwner());
 	
 	if (OwnerChar)
 	{
-		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->ForwardDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
-		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->SideDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
-		auto WishDir =  OwnerChar->ForwardDir + OwnerChar->SideDir;
-		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + WishDir * 100.0f, FColor::Yellow, false, 0.05f, 0, 3.0f);
+		WishDirection =  OwnerChar->ForwardDir + OwnerChar->SideDir;
+		WishDirection.Normalize();
+		Accelerate(WishDirection, WalkSpeed, WalkAcceleration, DeltaTime);
 	}
-	
-	Accelerate(WishDirection, WalkSpeed, WalkAcceleration, DeltaTime);
 }
 
 void UBunnyhopMovementComponent::ApplyGroundFriction(float DeltaTime)
@@ -170,3 +166,16 @@ bool UBunnyhopMovementComponent::IsJumpHeldDown()
 	return false;
 }
 
+
+void UBunnyhopMovementComponent::DrawDebugLines()
+{
+	auto OwnerChar = Cast<ABunnyhopCharacter>(GetOwner());
+	
+	if (OwnerChar)
+	{
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->ForwardDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + OwnerChar->SideDir * 100.0f, FColor::Blue, false, 0.05f, 0, 3.0f);
+		WishDirection =  OwnerChar->ForwardDir + OwnerChar->SideDir;
+		DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + WishDirection * 100.0f, FColor::Yellow, false, 0.05f, 0, 3.0f);
+	}
+}
